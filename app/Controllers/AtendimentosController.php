@@ -17,6 +17,14 @@ class AtendimentosController
         echo json_encode($dados, JSON_UNESCAPED_UNICODE);
     }
 
+    private function usuarioResponsavel(): int
+    {
+        if (isset($_SESSION['usuario']['id'])) {
+            return (int) $_SESSION['usuario']['id'];
+        }
+        return (int) ($_POST['usuario_id'] ?? 0);
+    }
+
     public function listar(): void
     {
         $sql = 'SELECT a.id,
@@ -59,7 +67,7 @@ class AtendimentosController
     {
         $pessoaId  = filter_var($_POST['pessoa_id']           ?? null, FILTER_VALIDATE_INT);
         $tipoId    = filter_var($_POST['tipo_atendimento_id'] ?? null, FILTER_VALIDATE_INT);
-        $usuarioId = filter_var($_POST['usuario_id']          ?? null, FILTER_VALIDATE_INT);
+        $usuarioId = $this->usuarioResponsavel();
         $descricao = trim($_POST['descricao']          ?? '');
         $data      = $_POST['data_atendimento']         ?? '';
         $horario   = $_POST['horario_atendimento']      ?? '';
@@ -94,9 +102,9 @@ class AtendimentosController
 
     public function alterarStatus(): void
     {
-        $id          = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);
-        $status      = $_POST['status']               ?? '';
-        $observacao  = trim($_POST['observacao_final'] ?? '');
+        $id         = filter_var($_POST['id']     ?? null, FILTER_VALIDATE_INT);
+        $status     = $_POST['status']             ?? '';
+        $observacao = trim($_POST['observacao_final'] ?? '');
 
         if (!$id || !in_array($status, ['aberto', 'em_andamento', 'concluido'], true)) {
             $this->json(['erro' => 'ID ou status invalido.'], 422); return;

@@ -6,6 +6,8 @@ require_once __DIR__ . '/app/Controllers/UsuarioController.php';
 require_once __DIR__ . '/app/Controllers/PessoasController.php';
 require_once __DIR__ . '/app/Controllers/TiposAtendimentosController.php';
 require_once __DIR__ . '/app/Controllers/AtendimentosController.php';
+require_once __DIR__ . '/app/Controllers/DashboardController.php';
+require_once __DIR__ . '/app/Controllers/FrontendController.php';
 
 $controller = $_GET['controller'] ?? 'auth';
 $action     = $_GET['action']     ?? 'login';
@@ -27,18 +29,40 @@ if ($controller === 'auth') {
 exigirAutenticacao();
 
 switch ($controller) {
+    case 'dashboard':
+        $obj = new DashboardController();
+        switch ($action) {
+            case 'resumo': $obj->resumo(); break;
+            default: http_response_code(404); exit('Acao de dashboard nao encontrada.');
+        }
+        exit;
+
+    case 'frontend':
+        $obj = new FrontendController();
+        switch ($action) {
+            case 'pessoas':      $obj->pessoas();      break;
+            case 'tipos':        $obj->tipos();        break;
+            case 'atendimentos': $obj->atendimentos(); break;
+            default: http_response_code(404); exit('Pagina nao encontrada.');
+        }
+        exit;
+
     case 'usuarios':
         $obj = new UsuarioController();
         break;
+
     case 'pessoas':
         $obj = new PessoasController();
         break;
+
     case 'tipos':
         $obj = new TiposAtendimentosController();
         break;
+
     case 'atendimentos':
         $obj = new AtendimentosController();
         break;
+
     default:
         http_response_code(404);
         exit('Controller nao encontrado.');
