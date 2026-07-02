@@ -133,11 +133,14 @@ async function carregarAtendimentos() {
             return;
         }
         tbody.innerHTML = atendimentos.map(a => {
-            const pessoa = labelRegistro(a, 'pessoa', 'pessoa_nome', 'nome_pessoa');
-            const tipo = labelRegistro(a, 'tipo', 'tipo_nome', 'tipo_atendimento', 'nome_tipo');
-            const responsavel = labelRegistro(a, 'responsavel', 'usuario', 'usuario_nome', 'nome_usuario');
-            const data = labelRegistro(a, 'data_atendimento', 'data');
-            const classeStatus = a.status === 'concluido' ? 'text-bg-success' : a.status === 'em_andamento' ? 'text-bg-warning' : 'text-bg-primary';
+            const pessoa      = labelRegistro(a, 'pessoa', 'pessoa_nome', 'nome_pessoa');
+            const tipo        = labelRegistro(a, 'tipo', 'tipo_nome', 'tipo_atendimento', 'nome_tipo');
+            const responsavel = labelRegistro(a, 'responsavel', 'usuario', 'usuario_nome', 'nome_usuario', 'responsavel_nome');
+            const data        = labelRegistro(a, 'data_atendimento', 'data');
+            const classeStatus =
+                a.status === 'concluido'    ? 'text-bg-success' :
+                a.status === 'em_andamento' ? 'text-bg-primary'  :
+                                              'text-bg-danger';
             return `<tr>
                 <td>${AtendeLabApi.escape(a.id)}</td>
                 <td>${AtendeLabApi.escape(pessoa)}</td>

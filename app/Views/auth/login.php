@@ -25,9 +25,9 @@ require_once __DIR__ . '/../layouts/config-view.php';
                     <?= htmlspecialchars((string) $mensagem, ENT_QUOTES, 'UTF-8') ?>
                 </div>
             <?php endif; ?>
-            <?php if (!empty($erroLogin)): ?>
+            <?php if (!empty($erro)): ?>
                 <div class="alert alert-danger">
-                    <?= htmlspecialchars((string) $erroLogin, ENT_QUOTES, 'UTF-8') ?>
+                    <?= htmlspecialchars((string) $erro, ENT_QUOTES, 'UTF-8') ?>
                 </div>
             <?php endif; ?>
             <form method="post" action="<?= $baseUrl ?>?controller=auth&action=entrar">

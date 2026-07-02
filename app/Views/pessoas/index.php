@@ -16,17 +16,44 @@ require __DIR__ . '/../layouts/header.php';
         <form id="formPessoa">
             <input type="hidden" name="id" id="pessoaId">
             <div class="row g-3">
-                <div class="col-md-6"><label class="form-label">Nome *</label><input class="form-control" name="nome" required></div>
-                <div class="col-md-3"><label class="form-label">Documento *</label><input class="form-control" name="documento" required></div>
-                <div class="col-md-3"><label class="form-label">Telefone</label><input class="form-control" name="telefone"></div>
-                <div class="col-md-6"><label class="form-label">E-mail *</label><input class="form-control" type="email" name="email" required></div>
-                <div class="col-md-3"><label class="form-label">Curso</label><input class="form-control" name="curso"></div>
-                <div class="col-md-3"><label class="form-label">Período</label><input class="form-control" name="periodo"></div>
-                <div class="col-12"><label class="form-label">Observações</label><textarea class="form-control" name="observacoes" rows="2"></textarea></div>
-                <div class="col-md-3"><label class="form-label">Status</label><select class="form-select" name="status">
-                    <option value="ativo">Ativo</option>
-                    <option value="inativo">Inativo</option>
-                </select></div>
+                <div class="col-md-6">
+                    <label class="form-label">Nome *</label>
+                    <input class="form-control" name="nome" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Documento *</label>
+                    <input class="form-control" name="documento" id="documento"
+                        placeholder="000.000.000-00" maxlength="14" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Telefone</label>
+                    <input class="form-control" name="telefone" id="telefone"
+                        placeholder="(00) 0 0000-0000" maxlength="16">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">E-mail *</label>
+                    <input class="form-control" type="email" name="email" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Curso</label>
+                    <input class="form-control" name="curso">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Período</label>
+                    <input class="form-control" name="periodo" id="periodo"
+                        placeholder="Ex: 3" maxlength="2">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Observações</label>
+                    <textarea class="form-control" name="observacoes" rows="2"></textarea>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select class="form-select" name="status">
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </div>
             </div>
             <div class="d-flex gap-2 mt-3">
                 <button class="btn btn-success" type="submit">Salvar</button>
@@ -62,6 +89,27 @@ require __DIR__ . '/../layouts/header.php';
     function abrirFormulario() { cardFormulario.classList.remove('d-none'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     function fecharFormulario() { cardFormulario.classList.add('d-none'); formPessoa.reset(); document.getElementById('pessoaId').value = ''; }
     function novaPessoa() { fecharFormulario(); document.getElementById('tituloFormulario').textContent = 'Nova pessoa'; abrirFormulario(); }
+
+    document.getElementById('documento').addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '').substring(0, 11);
+        if (v.length > 9)      v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+        else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{1,3})/,        '$1.$2.$3');
+        else if (v.length > 3) v = v.replace(/(\d{3})(\d{1,3})/,               '$1.$2');
+        e.target.value = v;
+    });
+
+    document.getElementById('telefone').addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '').substring(0, 11);
+        if (v.length > 10)     v = v.replace(/(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
+        else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d{0,4})/,      '($1) $2-$3');
+        else if (v.length > 2) v = v.replace(/(\d{2})(\d{0,5})/,             '($1) $2');
+        else if (v.length > 0) v = v.replace(/(\d*)/,                        '($1');
+        e.target.value = v;
+    });
+
+    document.getElementById('periodo').addEventListener('input', function (e) {
+        e.target.value = e.target.value.replace(/\D/g, '');
+    });
 
     async function carregarPessoas() {
         try {
