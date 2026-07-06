@@ -25,7 +25,7 @@ require __DIR__ . '/../layouts/header.php';
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Data *</label>
-                    <input class="form-control" type="date" name="data_atendimento" required>
+                    <input class="form-control" type="date" name="data_atendimento" id="dataAtendimento" required>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Horário *</label>
@@ -99,6 +99,16 @@ const formAtendimento = document.getElementById('formAtendimento');
 const cardFormulario = document.getElementById('cardFormulario');
 const statusModal = () => bootstrap.Modal.getOrCreateInstance(document.getElementById('modalStatus'));
 
+const hoje = new Date();
+hoje.setHours(0, 0, 0, 0);
+const minData = new Date();
+minData.setDate(hoje.getDate() - 30);
+minData.setHours(0, 0, 0, 0);
+const formatarData = (d) => d.toISOString().split('T')[0];
+const dataInput = document.getElementById('dataAtendimento');
+dataInput.max = formatarData(hoje);
+dataInput.min = formatarData(minData);
+
 function novoAtendimento() { cardFormulario.classList.remove('d-none'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 function fecharFormulario() { cardFormulario.classList.add('d-none'); formAtendimento.reset(); }
 
@@ -158,6 +168,11 @@ async function carregarAtendimentos() {
 
 formAtendimento.addEventListener('submit', async event => {
     event.preventDefault();
+    const dataSelecionada = new Date(document.getElementById('dataAtendimento').value + 'T00:00:00');
+    if (dataSelecionada > hoje || dataSelecionada < minData) {
+        AtendeLabApi.showAlert('alerta', 'A data deve estar entre hoje e os últimos 30 dias.', 'danger');
+        return;
+    }
     try {
         await AtendeLabApi.post('atendimentos', 'criar', new FormData(formAtendimento));
         AtendeLabApi.showAlert('alerta', 'Atendimento registrado com sucesso.');
